@@ -373,7 +373,12 @@
               <div class="flip-back">↩ 다시 앞면 보기</div>
             </div>
           </div>`;
-        const flip = () => scene.classList.toggle("flipped");
+        const cardEl = scene.querySelector(".card");
+        const flip = () => {
+          scene.classList.toggle("flipped");
+          // clear any inline tilt transform so the .flipped CSS rule can take over
+          cardEl.style.transform = "";
+        };
         scene.addEventListener("click", flip);
         scene.addEventListener("keydown", (ev) => {
           if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); flip(); }
@@ -407,11 +412,17 @@
       return a;
     }
 
+    function setFlipped(state) {
+      document.querySelectorAll(".scene").forEach(s => {
+        s.classList.toggle("flipped", state);
+        // clear inline tilt transform so the .flipped CSS rule always applies
+        s.querySelector(".card").style.transform = "";
+      });
+    }
+
     document.getElementById("shuffle").addEventListener("click", () => render(shuffle(EMOTIONS)));
-    document.getElementById("flipAll").addEventListener("click", () =>
-      document.querySelectorAll(".scene").forEach(s => s.classList.add("flipped")));
-    document.getElementById("resetAll").addEventListener("click", () =>
-      document.querySelectorAll(".scene").forEach(s => s.classList.remove("flipped")));
+    document.getElementById("flipAll").addEventListener("click", () => setFlipped(true));
+    document.getElementById("resetAll").addEventListener("click", () => setFlipped(false));
 
     render(EMOTIONS);
 
