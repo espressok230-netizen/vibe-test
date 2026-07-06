@@ -109,20 +109,47 @@
     }
 
     .mascot {
+      position: relative;
       display: grid;
       place-items: center;
       min-height: 220px;
     }
 
+    .mascot::after {
+      content: "";
+      position: absolute;
+      bottom: 2px;
+      width: min(190px, 44vw);
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(37, 50, 74, 0.13);
+      filter: blur(2px);
+      animation: shadowFloat 3.2s ease-in-out infinite;
+    }
+
     .friend {
       position: relative;
+      z-index: 1;
       width: min(240px, 54vw);
       aspect-ratio: 1;
       border: 10px solid #ffffff;
       border-radius: 42% 58% 48% 52%;
       background: linear-gradient(145deg, #ffe58f 0%, #ffb3ca 100%);
       box-shadow: 0 24px 42px rgba(255, 131, 166, 0.28);
+      transform-origin: 50% 86%;
       animation: float 3.2s ease-in-out infinite;
+    }
+
+    .mascot.wave .friend {
+      animation: waveDance 0.9s ease-in-out 2, float 3.2s ease-in-out 1.8s infinite;
+    }
+
+    .mascot.breathe .friend {
+      animation: mascotBreathe 3s ease-in-out infinite;
+    }
+
+    .mascot.cheer .friend {
+      animation: cheerJump 0.72s cubic-bezier(0.34, 1.56, 0.64, 1) 3, float 3.2s ease-in-out 2.2s infinite;
     }
 
     .friend::before,
@@ -135,6 +162,7 @@
       border-radius: 50%;
       background: var(--ink);
       box-shadow: 0 3px 0 rgba(255, 255, 255, 0.7) inset;
+      z-index: 1;
     }
 
     .friend::before {
@@ -155,6 +183,144 @@
       border-top: 0;
       border-radius: 0 0 999px 999px;
       transform: translateX(-50%);
+      z-index: 1;
+    }
+
+    .arm {
+      position: absolute;
+      top: 50%;
+      z-index: 0;
+      width: 76px;
+      height: 28px;
+      border: 8px solid #ffffff;
+      border-radius: 999px;
+      background: #ffb3ca;
+      transform-origin: 86% 50%;
+    }
+
+    .arm.left {
+      left: -48px;
+      transform: rotate(18deg);
+    }
+
+    .arm.right {
+      right: -48px;
+      transform: rotate(162deg);
+      transform-origin: 14% 50%;
+    }
+
+    .foot {
+      position: absolute;
+      bottom: -24px;
+      width: 58px;
+      height: 34px;
+      border: 8px solid #ffffff;
+      border-radius: 999px;
+      background: #9b7cf6;
+      box-shadow: 0 8px 14px rgba(37, 50, 74, 0.12);
+      z-index: 0;
+    }
+
+    .foot.left {
+      left: 34px;
+      transform: rotate(-8deg);
+    }
+
+    .foot.right {
+      right: 34px;
+      transform: rotate(8deg);
+    }
+
+    .speech {
+      position: absolute;
+      top: -28px;
+      left: 50%;
+      z-index: 2;
+      min-width: 126px;
+      padding: 10px 14px;
+      border: 4px solid #ffffff;
+      border-radius: 999px;
+      background: #ffffff;
+      color: var(--purple);
+      font-size: 1rem;
+      font-weight: 900;
+      text-align: center;
+      box-shadow: 0 12px 24px rgba(155, 124, 246, 0.18);
+      opacity: 0;
+      transform: translate(-50%, 8px) scale(0.92);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .speech::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -10px;
+      width: 20px;
+      height: 20px;
+      background: #ffffff;
+      transform: translateX(-50%) rotate(45deg);
+    }
+
+    .action-line {
+      position: absolute;
+      z-index: 0;
+      width: 12px;
+      height: 54px;
+      border-radius: 999px;
+      background: #ffd666;
+      opacity: 0;
+    }
+
+    .action-line.left {
+      top: 24px;
+      left: 16px;
+      transform: rotate(-34deg);
+    }
+
+    .action-line.right {
+      right: 16px;
+      bottom: 34px;
+      transform: rotate(-34deg);
+    }
+
+    .mascot.wave .arm.left {
+      animation: leftWave 0.45s ease-in-out 4;
+    }
+
+    .mascot.wave .arm.right {
+      animation: rightWave 0.45s ease-in-out 4;
+    }
+
+    .mascot.breathe .speech,
+    .mascot.cheer .speech,
+    .mascot.wave .speech {
+      opacity: 1;
+      transform: translate(-50%, 0) scale(1);
+    }
+
+    .mascot.breathe .arm.left {
+      animation: leftBreathe 3s ease-in-out infinite;
+    }
+
+    .mascot.breathe .arm.right {
+      animation: rightBreathe 3s ease-in-out infinite;
+    }
+
+    .mascot.cheer .arm.left {
+      animation: leftCheer 0.36s ease-in-out 6;
+    }
+
+    .mascot.cheer .arm.right {
+      animation: rightCheer 0.36s ease-in-out 6;
+    }
+
+    .mascot.cheer .action-line {
+      animation: actionPop 0.72s ease-in-out 3;
+    }
+
+    .mascot.cheer::after {
+      animation: shadowJump 0.72s ease-in-out 3, shadowFloat 3.2s ease-in-out 2.2s infinite;
     }
 
     .sparkle {
@@ -169,6 +335,7 @@
       font-size: 1.8rem;
       box-shadow: 0 12px 24px rgba(155, 124, 246, 0.18);
       animation: twinkle 2s ease-in-out infinite;
+      z-index: 2;
     }
 
     .sparkle.one {
@@ -488,6 +655,71 @@
       50% { transform: translateY(-14px) rotate(2deg); }
     }
 
+    @keyframes shadowFloat {
+      0%, 100% { transform: scaleX(1); opacity: 0.13; }
+      50% { transform: scaleX(0.82); opacity: 0.08; }
+    }
+
+    @keyframes waveDance {
+      0%, 100% { transform: translateY(0) rotate(-2deg) scale(1); }
+      25% { transform: translateY(-12px) rotate(-9deg) scale(1.03); }
+      50% { transform: translateY(0) rotate(7deg) scale(1); }
+      75% { transform: translateY(-8px) rotate(-6deg) scale(1.02); }
+    }
+
+    @keyframes mascotBreathe {
+      0%, 100% { transform: translateY(0) scale(0.95); }
+      45% { transform: translateY(-10px) scale(1.08); }
+      70% { transform: translateY(-4px) scale(1.02); }
+    }
+
+    @keyframes cheerJump {
+      0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+      35% { transform: translateY(-48px) rotate(-7deg) scale(1.06); }
+      65% { transform: translateY(-18px) rotate(7deg) scale(1.03); }
+    }
+
+    @keyframes shadowJump {
+      0%, 100% { transform: scaleX(1); opacity: 0.13; }
+      35% { transform: scaleX(0.56); opacity: 0.06; }
+      65% { transform: scaleX(0.72); opacity: 0.08; }
+    }
+
+    @keyframes leftWave {
+      0%, 100% { transform: rotate(18deg); }
+      50% { transform: rotate(-34deg) translateY(-10px); }
+    }
+
+    @keyframes rightWave {
+      0%, 100% { transform: rotate(162deg); }
+      50% { transform: rotate(194deg) translateY(-10px); }
+    }
+
+    @keyframes leftBreathe {
+      0%, 100% { transform: rotate(18deg) translateX(0); }
+      50% { transform: rotate(8deg) translateX(-10px); }
+    }
+
+    @keyframes rightBreathe {
+      0%, 100% { transform: rotate(162deg) translateX(0); }
+      50% { transform: rotate(172deg) translateX(10px); }
+    }
+
+    @keyframes leftCheer {
+      0%, 100% { transform: rotate(18deg); }
+      50% { transform: rotate(-56deg) translateY(-22px); }
+    }
+
+    @keyframes rightCheer {
+      0%, 100% { transform: rotate(162deg); }
+      50% { transform: rotate(214deg) translateY(-22px); }
+    }
+
+    @keyframes actionPop {
+      0%, 100% { opacity: 0; transform: scaleY(0.5) rotate(-34deg); }
+      35% { opacity: 1; transform: scaleY(1.1) rotate(-34deg); }
+    }
+
     @keyframes twinkle {
       0%, 100% { transform: scale(1) rotate(0deg); }
       50% { transform: scale(1.12) rotate(8deg); }
@@ -547,9 +779,16 @@
           상담교실은 마음이 힘들 때도, 궁금한 이야기가 있을 때도 편하게 찾아오는 곳이에요.
         </p>
       </div>
-      <div class="mascot" aria-hidden="true">
+      <div class="mascot wave" id="mascot" aria-hidden="true">
         <div class="friend">
+          <div class="speech" id="mascotSpeech">안녕!</div>
+          <div class="action-line left"></div>
+          <div class="action-line right"></div>
+          <div class="arm left"></div>
+          <div class="arm right"></div>
           <div class="smile"></div>
+          <div class="foot left"></div>
+          <div class="foot right"></div>
           <div class="sparkle one">★</div>
           <div class="sparkle two">♥</div>
         </div>
@@ -699,6 +938,8 @@
     const finalEmoji = document.getElementById("finalEmoji");
     const finalText = document.getElementById("finalText");
     const musicBtn = document.getElementById("musicBtn");
+    const mascot = document.getElementById("mascot");
+    const mascotSpeech = document.getElementById("mascotSpeech");
     const stepNames = ["마음 고르기", "숨쉬기 연습", "도움 요청", "상담교실 소개"];
 
     let currentScene = 0;
@@ -709,6 +950,21 @@
     let musicTimer = null;
     let isMusicPlaying = false;
     let melodyIndex = 0;
+    let mascotTimer = null;
+
+    function setMascotMood(mood, message, duration) {
+      mascot.classList.remove("wave", "breathe", "cheer");
+      if (mood) mascot.classList.add(mood);
+      mascotSpeech.textContent = message;
+
+      clearTimeout(mascotTimer);
+      if (duration) {
+        mascotTimer = window.setTimeout(function () {
+          mascot.classList.remove("wave", "breathe", "cheer");
+          mascotSpeech.textContent = "함께해요!";
+        }, duration);
+      }
+    }
 
     function getAudioContext() {
       if (!audioContext) {
@@ -816,7 +1072,11 @@
         star.classList.toggle("on", starIndex <= index);
       });
 
+      if (index === 0) setMascotMood("wave", "골라 봐!", 1800);
+      if (index === 1) setMascotMood("breathe", "천천히~");
+      if (index === 2) setMascotMood("wave", "말해 봐!", 1800);
       if (index === 3) {
+        setMascotMood("cheer", "성공!", 2300);
         finalEmoji.textContent = selectedEmoji;
         finalText.textContent = (selectedFeeling || "내 마음") + "을 알아차린 멋진 마음 탐험가예요!";
         playSuccessSound();
@@ -832,6 +1092,7 @@
           "<strong>" + selectedEmoji + " " + selectedFeeling + "</strong><br>" +
           button.dataset.message;
         scenes[0].querySelector(".next").disabled = false;
+        setMascotMood("cheer", "좋아요!", 1500);
       });
     });
 
@@ -857,6 +1118,7 @@
       breathBtn.disabled = true;
       breathNext.disabled = true;
       breathStatus.textContent = "좋아요, 시작해 볼게요!";
+      setMascotMood("breathe", "후우~");
 
       clearInterval(breathTimer);
       breathTimer = setInterval(function () {
@@ -873,6 +1135,7 @@
           breathStatus.textContent = "마음 풍선 숨쉬기 성공! 필요할 때 언제든 다시 해 봐요.";
           breathBtn.disabled = false;
           breathNext.disabled = false;
+          setMascotMood("cheer", "잘했어!", 1800);
         }
       }, 1500);
     });
@@ -882,6 +1145,7 @@
         button.closest(".mission").classList.add("done");
         button.textContent = "완료!";
         button.disabled = true;
+        setMascotMood("cheer", "용기 최고!", 1500);
 
         const doneCount = document.querySelectorAll(".mission.done").length;
         missionNext.disabled = doneCount < 3;
@@ -909,6 +1173,7 @@
       });
       missionNext.disabled = true;
       showScene(0);
+      setMascotMood("wave", "다시 출발!", 1800);
     });
 
     document.getElementById("printBtn").addEventListener("click", function () {
