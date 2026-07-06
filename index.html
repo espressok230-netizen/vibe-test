@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>상담 타이머</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      background: linear-gradient(160deg, #1a3a5c 0%, #2d5a87 45%, #3d7ab5 100%);
+      color: #e8f4fc;
+      transition: background 2s ease;
+      padding: 24px 16px;
+      overflow-x: hidden;
+    }
+
+    body.ended {
+      background: linear-gradient(160deg, #4a3060 0%, #6b4080 45%, #8b5098 100%);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: clamp(1.4rem, 5vw, 1.8rem);
+      font-weight: 600;
+      margin-bottom: 32px;
+      letter-spacing: 0.05em;
+      opacity: 0.9;
+    }
+
+    .timer-display {
+      font-size: clamp(5rem, 22vw, 8rem);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
+      line-height: 1;
+      margin: 24px 0 40px;
+      text-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .ended-message {
+      display: none;
+      font-size: clamp(2rem, 10vw, 3.5rem);
+      font-weight: 700;
+      margin: 16px 0 32px;
+      animation: fadeIn 1.5s ease;
+    }
+
+    body.ended .ended-message {
+      display: block;
+    }
+
+    body.ended .timer-display {
+      opacity: 0.5;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-label {
+      font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+      opacity: 0.75;
+      margin-bottom: 12px;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+
+    button {
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:active {
+      transform: scale(0.96);
+    }
+
+    .preset-btn {
+      flex: 1 1 calc(33% - 8px);
+      min-width: 90px;
+      padding: 18px 12px;
+      font-size: clamp(1.1rem, 4.5vw, 1.35rem);
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      backdrop-filter: blur(8px);
+      border: 2px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .preset-btn:hover,
+    .preset-btn.active {
+      background: rgba(255, 255, 255, 0.28);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .control-btn {
+      flex: 1 1 calc(33% - 8px);
+      min-width: 90px;
+      padding: 20px 12px;
+      font-size: clamp(1.15rem, 4.5vw, 1.4rem);
+      color: #1a3a5c;
+    }
+
+    .start-btn {
+      background: #a8d8f0;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .start-btn:hover {
+      background: #c5e8f8;
+    }
+
+    .pause-btn {
+      background: #ffd89b;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .pause-btn:hover {
+      background: #ffe4b8;
+    }
+
+    .reset-btn {
+      background: rgba(255, 255, 255, 0.85);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .reset-btn:hover {
+      background: #fff;
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>상담 타이머</h1>
+    <div class="timer-display" id="display">50:00</div>
+    <div class="ended-message" id="endedMsg">상담 종료</div>
+
+    <p class="section-label">시간 선택</p>
+    <div class="btn-group">
+      <button class="preset-btn active" data-minutes="50">50분</button>
+      <button class="preset-btn" data-minutes="30">30분</button>
+      <button class="preset-btn" data-minutes="10">10분</button>
+    </div>
+
+    <p class="section-label">조작</p>
+    <div class="btn-group">
+      <button class="control-btn start-btn" id="startBtn">시작</button>
+      <button class="control-btn pause-btn" id="pauseBtn" disabled>일시정지</button>
+      <button class="control-btn reset-btn" id="resetBtn">초기화</button>
+    </div>
+  </div>
+
+  <script>
+    let totalSeconds = 50 * 60;
+    let remainingSeconds = totalSeconds;
+    let timerId = null;
+    let isRunning = false;
+
+    const display = document.getElementById("display");
+    const endedMsg = document.getElementById("endedMsg");
+    const startBtn = document.getElementById("startBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const presetBtns = document.querySelectorAll(".preset-btn");
+
+    function formatTime(seconds) {
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+    }
+
+    function updateDisplay() {
+      display.textContent = formatTime(remainingSeconds);
+    }
+
+    function setButtonsRunning(running) {
+      isRunning = running;
+      startBtn.disabled = running;
+      pauseBtn.disabled = !running;
+      presetBtns.forEach(function (btn) {
+        btn.disabled = running;
+      });
+    }
+
+    function clearEndedState() {
+      document.body.classList.remove("ended");
+      endedMsg.style.display = "none";
+    }
+
+    function onTimerEnd() {
+      clearInterval(timerId);
+      timerId = null;
+      remainingSeconds = 0;
+      updateDisplay();
+      setButtonsRunning(false);
+      document.body.classList.add("ended");
+      endedMsg.style.display = "block";
+
+      if ("vibrate" in navigator) {
+        navigator.vibrate([300, 150, 300]);
+      }
+    }
+
+    function tick() {
+      if (remainingSeconds <= 0) {
+        onTimerEnd();
+        return;
+      }
+      remainingSeconds--;
+      updateDisplay();
+      if (remainingSeconds <= 0) {
+        onTimerEnd();
+      }
+    }
+
+    function startTimer() {
+      if (remainingSeconds <= 0) return;
+      clearEndedState();
+      if (timerId) return;
+      setButtonsRunning(true);
+      timerId = setInterval(tick, 1000);
+    }
+
+    function pauseTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+      setButtonsRunning(false);
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      clearEndedState();
+      remainingSeconds = totalSeconds;
+      updateDisplay();
+    }
+
+    presetBtns.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        if (isRunning) return;
+        presetBtns.forEach(function (b) { b.classList.remove("active"); });
+        btn.classList.add("active");
+        totalSeconds = parseInt(btn.dataset.minutes, 10) * 60;
+        remainingSeconds = totalSeconds;
+        clearEndedState();
+        updateDisplay();
+      });
+    });
+
+    startBtn.addEventListener("click", startTimer);
+    pauseBtn.addEventListener("click", pauseTimer);
+    resetBtn.addEventListener("click", resetTimer);
+
+    updateDisplay();
+  </script>
+</body>
+</html>
