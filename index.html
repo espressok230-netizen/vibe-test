@@ -216,6 +216,14 @@
       font-size: 1.6rem;
     }
 
+    .sound-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
     .star {
       opacity: 0.2;
       transform: scale(0.85);
@@ -551,7 +559,7 @@
     <section class="game-card" aria-live="polite">
       <div class="top-line">
         <div class="step-label" id="stepLabel">1단계 마음 고르기</div>
-        <div class="top-line">
+        <div class="sound-row">
           <button class="music-toggle" id="musicBtn" type="button" aria-pressed="false">음악 켜기</button>
           <div class="stars" aria-label="모은 마음 별">
             <span class="star">★</span>
