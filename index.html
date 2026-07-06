@@ -391,6 +391,14 @@
       justify-content: flex-end;
     }
 
+    .sound-hint {
+      flex-basis: 100%;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-align: right;
+    }
+
     .star {
       opacity: 0.2;
       transform: scale(0.85);
@@ -800,6 +808,7 @@
         <div class="step-label" id="stepLabel">1단계 마음 고르기</div>
         <div class="sound-row">
           <button class="music-toggle" id="musicBtn" type="button" aria-pressed="false">음악 켜기</button>
+          <span class="sound-hint" id="soundHint">아무 버튼이나 누르면 소리와 음악이 시작돼요</span>
           <div class="stars" aria-label="모은 마음 별">
             <span class="star">★</span>
             <span class="star">★</span>
@@ -938,6 +947,7 @@
     const finalEmoji = document.getElementById("finalEmoji");
     const finalText = document.getElementById("finalText");
     const musicBtn = document.getElementById("musicBtn");
+    const soundHint = document.getElementById("soundHint");
     const mascot = document.getElementById("mascot");
     const mascotSpeech = document.getElementById("mascotSpeech");
     const stepNames = ["마음 고르기", "숨쉬기 연습", "도움 요청", "상담교실 소개"];
@@ -949,6 +959,7 @@
     let audioContext = null;
     let musicTimer = null;
     let isMusicPlaying = false;
+    let musicWasTurnedOff = false;
     let melodyIndex = 0;
     let mascotTimer = null;
 
@@ -1030,6 +1041,9 @@
       musicBtn.classList.toggle("on", isMusicPlaying);
       musicBtn.setAttribute("aria-pressed", String(isMusicPlaying));
       musicBtn.textContent = isMusicPlaying ? "음악 끄기" : "음악 켜기";
+      soundHint.textContent = isMusicPlaying
+        ? "음악이 재생 중이에요. 모든 버튼에서 효과음이 나요"
+        : "아무 버튼이나 누르면 소리와 음악이 시작돼요";
     }
 
     function startMusic() {
@@ -1041,8 +1055,9 @@
       updateMusicButton();
     }
 
-    function stopMusic() {
+    function stopMusic(rememberChoice) {
       isMusicPlaying = false;
+      if (rememberChoice) musicWasTurnedOff = true;
       clearInterval(musicTimer);
       musicTimer = null;
       updateMusicButton();
@@ -1050,15 +1065,23 @@
 
     function toggleMusic() {
       if (isMusicPlaying) {
-        stopMusic();
+        stopMusic(true);
       } else {
+        musicWasTurnedOff = false;
         startMusic();
       }
     }
 
+    function startMusicAfterFirstGameClick(button) {
+      if (button === musicBtn || isMusicPlaying || musicWasTurnedOff) return;
+      startMusic();
+    }
+
     document.addEventListener("click", function (event) {
-      if (event.target.closest("button")) {
+      const button = event.target.closest("button");
+      if (button) {
         playClickSound();
+        startMusicAfterFirstGameClick(button);
       }
     });
 
