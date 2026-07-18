@@ -18,15 +18,15 @@
       align-items: center;
       justify-content: center;
       font-family: "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-      background: linear-gradient(160deg, #1a3a5c 0%, #2d5a87 45%, #3d7ab5 100%);
-      color: #e8f4fc;
+      background: linear-gradient(160deg, #2c4a44 0%, #3d6359 45%, #4f7a6e 100%);
+      color: #eef6f3;
       transition: background 2s ease;
       padding: 24px 16px;
       overflow-x: hidden;
     }
 
     body.ended {
-      background: linear-gradient(160deg, #4a3060 0%, #6b4080 45%, #8b5098 100%);
+      background: linear-gradient(160deg, #5a3d4a 0%, #7a5060 45%, #9a6478 100%);
     }
 
     .container {
@@ -124,25 +124,25 @@
       min-width: 90px;
       padding: 20px 12px;
       font-size: clamp(1.15rem, 4.5vw, 1.4rem);
-      color: #1a3a5c;
+      color: #2c4a44;
     }
 
     .start-btn {
-      background: #a8d8f0;
+      background: #b8ddd0;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     }
 
     .start-btn:hover {
-      background: #c5e8f8;
+      background: #d0ebe2;
     }
 
     .pause-btn {
-      background: #ffd89b;
+      background: #e8d4b0;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     }
 
     .pause-btn:hover {
-      background: #ffe4b8;
+      background: #f2e4c8;
     }
 
     .reset-btn {
@@ -164,13 +164,13 @@
 <body>
   <div class="container">
     <h1>상담 타이머</h1>
-    <div class="timer-display" id="display">50:00</div>
+    <div class="timer-display" id="display">45:00</div>
     <div class="ended-message" id="endedMsg">상담 종료</div>
 
     <p class="section-label">시간 선택</p>
     <div class="btn-group">
-      <button class="preset-btn active" data-minutes="50">50분</button>
-      <button class="preset-btn" data-minutes="30">30분</button>
+      <button class="preset-btn active" data-minutes="45">45분</button>
+      <button class="preset-btn" data-minutes="40">40분</button>
       <button class="preset-btn" data-minutes="10">10분</button>
     </div>
 
@@ -183,7 +183,7 @@
   </div>
 
   <script>
-    let totalSeconds = 50 * 60;
+    let totalSeconds = 45 * 60;
     let remainingSeconds = totalSeconds;
     let timerId = null;
     let isRunning = false;
